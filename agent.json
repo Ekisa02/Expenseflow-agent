@@ -1,0 +1,530 @@
+{
+  "name": "AgroShield agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=every gather the weather for Nairobi,Kenya.\nPull in two to three positive, trending news stories, and find a fun fact from Wikipedia.Don't repeat anything from previous days.\nFormat it like a mini-email newsletter in Markdown. Today`s Date {{ $json.timestamp }}.Avoid the following Topics:{{ $json.content.parts[0].text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        32
+      ],
+      "id": "f9c519f0-378f-4cf3-bb1e-1423a8d20191",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        32,
+        240
+      ],
+      "id": "0b66340c-5eba-4c59-aad0-137dc55bc014",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "26YtZDR9BLEpoK7s",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": " test_id"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        144,
+        240
+      ],
+      "id": "a63567cb-37e0-4dab-916b-165be421c94d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        256,
+        240
+      ],
+      "id": "90a35174-7be8-4276-be28-41328293ebbc",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        240
+      ],
+      "id": "b9cd3420-c0a7-40de-b99c-5651cbfd4732",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "ifyeHMJOqU5WkzZq",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        16
+      ],
+      "id": "493ef37b-7306-4f01-97c6-5a349b6898a8",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "josephekisaopurongo@gmail.com",
+        "subject": "Daily Brieffing",
+        "emailType": "text",
+        "message": "={{ $('Markdown').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        736,
+        32
+      ],
+      "id": "2e8358db-f67d-4d82-bd20-d98c8f929113",
+      "name": "Send a message",
+      "webhookId": "0520043a-d88c-4a3a-93a3-65c0772f9f89",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iEday44qEsnD3BYg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        480,
+        32
+      ],
+      "id": "bb8751e5-6e13-472b-96db-5e5624ad3c25",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.0-flash-thinking-exp",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.0-flash-thinking-exp"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Beautify the HTML below using inline CSS styling for an email.\nFormat it like a modern newsletter.\nOutput only the results without any header elements.",
+              "role": "model"
+            },
+            {
+              "content": "={{ $json.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        640,
+        256
+      ],
+      "id": "f1a9ac9a-66bd-4468-8045-a31f69906306",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "26YtZDR9BLEpoK7s",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "cityName": "Nairobi, Kenya"
+      },
+      "type": "n8n-nodes-base.openWeatherMapTool",
+      "typeVersion": 1,
+      "position": [
+        512,
+        224
+      ],
+      "id": "d52e4553-80be-4b6d-9728-729e427b6895",
+      "name": "OpenWeatherMap",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "qUlnFuyiN8n1Fmei",
+          "name": "OpenWeatherMap account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.0-flash-thinking-exp",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.0-flash-thinking-exp"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "your job is to log the news and fun facts from the daily briefing inthe relevant columns within the googlesheet document you have access to. An AI will be reading the results of your work , so be sure to format it in a concise detailed manner that will be easy to parse and summarize with a small number of tokens",
+              "role": "model"
+            },
+            {
+              "content": "={{ $('Markdown').item.json.output }}Daily Briefings,"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        960,
+        80
+      ],
+      "id": "d1439f12-5f9c-490b-ba27-cb316a91d20b",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "26YtZDR9BLEpoK7s",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "17y-0YtO7GwWpNImMnfKITB9oqtJtROOVIiPWqD4ZwsI",
+          "mode": "list",
+          "cachedResultName": "Daily Briefing Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17y-0YtO7GwWpNImMnfKITB9oqtJtROOVIiPWqD4ZwsI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17y-0YtO7GwWpNImMnfKITB9oqtJtROOVIiPWqD4ZwsI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $('Schedule Trigger').item.json.timestamp }}",
+            "News": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('News', ``, 'string') }}",
+            "FunFacts": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('FunFacts', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "News",
+              "displayName": "News",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FunFacts",
+              "displayName": "FunFacts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        224
+      ],
+      "id": "13c0c06d-e9ea-428f-8f46-5413fd10ef84",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XHiyFpJdfBopMKgO",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.0-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.0-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Your job is to Review the google sheet to see what the prevous daily briefs caontained.The goal is not to repeat any fun facts or news stories.Generate a description for the AI inthe chain to understand which topics to avoid with the briesfing",
+              "role": "model"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        16
+      ],
+      "id": "b29889ad-bcdd-4cba-b1f7-5d4675aabb89",
+      "name": "Message a model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "26YtZDR9BLEpoK7s",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17y-0YtO7GwWpNImMnfKITB9oqtJtROOVIiPWqD4ZwsI",
+          "mode": "list",
+          "cachedResultName": "Daily Briefing Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17y-0YtO7GwWpNImMnfKITB9oqtJtROOVIiPWqD4ZwsI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17y-0YtO7GwWpNImMnfKITB9oqtJtROOVIiPWqD4ZwsI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -176,
+        208
+      ],
+      "id": "6217c2fa-e2e7-4d20-94e8-c0ae01bddbd3",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XHiyFpJdfBopMKgO",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeatherMap": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "db74e0ad-1898-42b1-aeee-eaeabc0cc506",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "256d51fefc18c404c5540cdc2a7f18554e9f80c6ae2d3d703c751b3422afbfba"
+  },
+  "id": "zyqfJWMsribmdT0A",
+  "tags": []
+}

@@ -149,5 +149,6 @@ Notes on key directories:
 - Add your license here (e.g., MIT). If none specified, please add a LICENSE file.
 
 ## Contact
+
 - Project owner: Ekisa (https://github.com/Ekisa02)
 - For questions about the hackathon submission or demo, open an issue or contact the maintainer via the GitHub profile.
